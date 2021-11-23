@@ -1,37 +1,39 @@
-import React, { useState } from "react";
-// import { DEPARTMENTS, ROLE, STAFFS } from '../shared/staffs';
-import dateFormat from "dateformat";
-import "./staff.css";
-import { Card,} from "reactstrap";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { Card, CardImg, CardText, CardBody,
+    CardTitle, CardSubtitle} from 'reactstrap';
 
-function RenderStaff({ staff }) {
-  return (
-    <div className="col-xs-6 col-md-4 col-lg-2">
-      <div className="staff-name">
+function RenderCard({item}) {
+
+    return(
         <Card>
-          <Link to={`/staff/${staff.id}`}>
-            <img src={staff.image} />
-            <p>{staff.name}</p>
-          </Link>
+            {item && item.image && <CardImg src={item.image} alt={item.name} />}
+            <CardBody>
+            {item&&<CardTitle>{item.name}</CardTitle>}
+            {item && item.designation ? <CardSubtitle>{item.designation}</CardSubtitle> : null }
+            {/* <CardText>{item.description}</CardText> */}
+            </CardBody>
         </Card>
-      </div>
-    </div>
-  );
+    );
+
 }
 
-function StaffList(props) {
-  
-  return (
-    <div className="container">
-      <h3>Nhân viên</h3>
-      <hr />
-      <div className="row">
-        {props.staffs.map((staff) => (
-          <RenderStaff key={staff.id} staff={staff} />
-        ))}
-      </div>
-    </div>
-  );
+function Home(props) {
+    console.log(props)
+    return(
+        <div className="container">
+            <div className="row align-items-start">
+                <div className="col-12 col-md m-1">
+                    <RenderCard item={props.dish} />
+                </div>
+                <div className="col-12 col-md m-1">
+                    <RenderCard item={props.promotion} />
+                </div>
+                <div className="col-12 col-md m-1">
+                    <RenderCard item={props.leader} />
+                </div>
+            </div>
+        </div>
+    );
 }
-export default StaffList;
+
+export default Home;
