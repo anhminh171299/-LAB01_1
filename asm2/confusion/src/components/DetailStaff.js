@@ -3,6 +3,7 @@ import {
     Card, CardImg, CardText, CardBody,
     CardTitle, BreadcrumbItem, Breadcrumb
 } from 'reactstrap';
+
 import { Link } from 'react-router-dom';
 import dateFormat from 'dateformat';
 import "./staff.css";
