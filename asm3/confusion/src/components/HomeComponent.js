@@ -28,7 +28,6 @@ function RenderStaff({ staff }) {
           <Link to={`/staff/${staff.id}`}>
             <img src={staff.image} />
             <p>{staff.name}</p>
-            
           </Link>
         </Card>
       </div>
@@ -37,8 +36,6 @@ function RenderStaff({ staff }) {
 }
 
 function StaffList(props) {
-  const [data, setData] = useState(props.staffs || []);
-  const [Id, setId] = useState("");
   const [name, setName] = useState("");
   const [doB, setDoB] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -58,12 +55,12 @@ function StaffList(props) {
       annualLeave,
       overTime,
       image: "/assets/images/alberto.png",
-      role: ROLE[0],
     };
-    localStorage.setItem("newStaff", "Bepatient");
-    const newSf = localStorage.getItem("newStaff");
-    console.log({ newSf });
-    setData([...data, newStaff]);
+    props.onAddStaff(newStaff);
+    // localStorage.setItem("newStaff", "Bepatient");
+    // const newSf = localStorage.getItem("newStaff");
+    // console.log({ newSf });
+    // setData([...data, newStaff]);
   };
 
   return (
@@ -78,18 +75,9 @@ function StaffList(props) {
           <ModalBody>
             <Form id="contactForm">
               <Form.Group className="mb-3" controlId="formBasicEmail">
-                <Form.Label>Số ID</Form.Label>
-                <Form.Control
-                  type="number"
-                  value={Id}
-                  onChange={(e) => setId(e.target.value)}
-                  placeholder="Số ID *Nhập số"
-                />
-              </Form.Group>
-              <Form.Group className="mb-3" controlId="formBasicEmail">
                 <Form.Label>Tên nhân viên</Form.Label>
                 <Form.Control
-                  type="email"
+                  type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Tên nhân viên"
@@ -116,12 +104,18 @@ function StaffList(props) {
               </Form.Group>
               <Form.Group className="mb-3" controlId="formBasicPassword">
                 <Form.Label>Phòng Ban</Form.Label>
-                <Form.Control
-                  type="email"
+                <Form.Select
+                  className="form-control"
                   value={department}
                   onChange={(e) => setDepartment(e.target.value)}
                   placeholder="Phòng Ban"
-                />
+                >
+                  <option value="Dept01">Sale</option>
+                  <option value="Dept02">HR</option>
+                  <option value="Dept03">Marketing</option>
+                  <option value="Dept04">IT</option>
+                  <option value="Dept05">Finance</option>
+                </Form.Select>
               </Form.Group>
               <Form.Group className="mb-3" controlId="formBasicPassword">
                 <Form.Label>Số ngày nghỉ còn lại</Form.Label>
@@ -156,7 +150,7 @@ function StaffList(props) {
 
       <hr />
       <div className="row">
-        {data.map((staff) => (
+        {props.staffs.map((staff) => (
           <RenderStaff key={staff.id} staff={staff} />
         ))}
       </div>

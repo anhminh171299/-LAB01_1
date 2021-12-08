@@ -28,7 +28,29 @@ class Main extends Component {
       staffs: STAFFS,
       departments: DEPARTMENTS,
     };
+    this.onAddStaff = this.onAddStaff.bind(this);
   }
+
+  componentDidMount() {
+    if (localStorage.getItem("staffs")) {
+      var staffs = JSON.parse(localStorage.getItem("staffs"));
+      this.setState({ staffs: staffs });
+    } else {
+      this.setState({ staffs: STAFFS });
+      localStorage.setItem("staffs", JSON.stringify(STAFFS));
+    }
+  }
+
+  onAddStaff(staff) {
+    staff.department = this.state.departments.filter(
+      (x) => x.id === staff.department
+    )[0];
+    staff.id = this.state.staffs.length;
+    var newStaffs = this.state.staffs.concat([staff]);
+    this.setState({ staffs: this.state.staffs.concat([staff]) });
+    localStorage.setItem("staffs", JSON.stringify(newStaffs));
+  }
+
   render() {
     const HomePage = () => {
       return <StaffList staffs={this.state.staffs} />;
@@ -60,13 +82,15 @@ class Main extends Component {
           <Route
             exact
             path="/staff"
-            component={() => <StaffList staffs={this.state.staffs} />}
+            component={() => (
+              <StaffList
+                onAddStaff={this.onAddStaff}
+                staffs={this.state.staffs}
+              />
+            )}
           />
           <Route path="/staff/:staffId" component={staffwithId} />
-          <Route
-            path="/search"
-            component={Search}
-          />
+          <Route path="/search" component={Search} />
           <Route path="/menu" component={Contact} />
           <Route path="/aboutus" component={AboutUs} />
           <Redirect to="/staff" />
