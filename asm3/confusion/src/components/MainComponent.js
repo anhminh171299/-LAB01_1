@@ -1,104 +1,73 @@
 import React, { Component } from "react";
+import Home from "./HomeComponent";
 import Menu from "./MenuComponent";
 import Contact from "./ContactComponent";
 import About from "./AboutComponent";
 import DishDetail from "./DishDetailComponent";
-import StaffList from "./HomeComponent";
-import DetailStaff from "./DetailStaff";
+import { COMMENTS } from "../shared/comments";
+import { PROMOTIONS } from "../shared/promotions";
+import { LEADERS } from "../shared/leaders";
 import Header from "./HeaderComponent";
 import Footer from "./FooterComponent";
 import { DISHES } from "../shared/dishes";
 import { Switch, Route, Redirect, withRouter } from "react-router-dom";
-import { connect } from "react-redux";
-import { DEPARTMENTS, ROLE, STAFFS } from "../shared/staffs";
-import Search from "./SearchComponent";
+import { connect } from 'react-redux';
 
-const mapStateToProps = (state) => {
-  return {
-    staffs: state.staffs,
-    comments: state.comments,
-    departments: state.departments,
-  };
-};
-
+const mapStateToProps = state => {
+    return {
+      dishes: state.dishes,
+      comments: state.comments,
+      promotions: state.promotions,
+      leaders: state.leaders
+    }
+  }
 class Main extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      staffs: STAFFS,
-      departments: DEPARTMENTS,
+      dishes: DISHES,
+      selectedDish: null,
+      comments: COMMENTS,
+      promotions: PROMOTIONS,
+      leaders: LEADERS,
     };
-    this.onAddStaff = this.onAddStaff.bind(this);
-  }
-
-  componentDidMount() {
-    if (localStorage.getItem("staffs")) {
-      var staffs = JSON.parse(localStorage.getItem("staffs"));
-      this.setState({ staffs: staffs });
-    } else {
-      this.setState({ staffs: STAFFS });
-      localStorage.setItem("staffs", JSON.stringify(STAFFS));
-    }
-  }
-
-  onAddStaff(staff) {
-    staff.department = this.state.departments.filter(
-      (x) => x.id === staff.department
-    )[0];
-    staff.id = this.state.staffs.length;
-    var newStaffs = this.state.staffs.concat([staff]);
-    this.setState({ staffs: this.state.staffs.concat([staff]) });
-    localStorage.setItem("staffs", JSON.stringify(newStaffs));
   }
 
   render() {
     const HomePage = () => {
-      return <StaffList staffs={this.state.staffs} />;
-    };
-
-    const AboutUs = () => {
-      return <About departments={this.state.departments} />;
-    };
-    const Contact = () => {
-      return <Menu staffs={this.state.staffs} />;
-    };
-
-    const staffwithId = ({ match }) => {
+        return(
+            <Home 
+                dish={this.props.dishes.filter((dish) => dish.featured)[0]}
+                promotion={this.props.promotions.filter((promo) => promo.featured)[0]}
+                leader={this.props.leaders.filter((leader) => leader.featured)[0]}
+            />
+        );
+      }
+  
+      const DishWithId = ({match}) => {
+        return(
+            <DishDetail dish={this.props.dishes.filter((dish) => dish.id === parseInt(match.params.dishId,10))[0]} 
+              comments={this.props.comments.filter((comment) => comment.dishId === parseInt(match.params.dishId,10))} />
+        );
+      };
+  
       return (
-        <DetailStaff
-          staff={
-            this.state.staffs.filter(
-              (staff) => staff.id === parseInt(match.params.staffId, 10)
-            )[0]
-          }
-        />
+        <div>
+          <Header />
+          <div>
+            <Switch>
+                <Route path='/home' component={HomePage} />
+                <Route exact path='/aboutus' component={() => <About leaders={this.props.leaders} />} />
+                <Route exact path='/menu' component={() => <Menu dishes={this.props.dishes} />} />
+                <Route path='/menu/:dishId' component={DishWithId} />
+                <Route exact path='/contactus' component={Contact} />
+                <Redirect to="/home" />
+            </Switch>
+          </div>
+          <Footer />
+        </div>
       );
-    };
-
-    return (
-      <div>
-        <Header />
-        <Switch>
-          <Route
-            exact
-            path="/staff"
-            component={() => (
-              <StaffList
-                onAddStaff={this.onAddStaff}
-                staffs={this.state.staffs}
-              />
-            )}
-          />
-          <Route path="/staff/:staffId" component={staffwithId} />
-          <Route path="/search" component={Search} />
-          <Route path="/menu" component={Contact} />
-          <Route path="/aboutus" component={AboutUs} />
-          <Redirect to="/staff" />
-        </Switch>
-        <Footer />
-      </div>
-    );
+    }
   }
-}
-
-export default withRouter(connect(mapStateToProps)(Main));
+  
+  export default withRouter(connect(mapStateToProps)(Main));
