@@ -21,7 +21,10 @@ class CommentForm extends Component {
         })
     }
     handleSubmit(values) {
-        alert(`Current value: ${JSON.stringify(values)}`)
+        this.toggleModal ();
+        
+        this.props.addComment(this.props.dishId, values.rating, values.author, values.comment);
+
     }
     render() {
         return (
@@ -37,7 +40,7 @@ class CommentForm extends Component {
                                 <Label md={2}>Rating</Label>
                                 <Col md={10}>
                                     <Control.select className='form-control' name='select'
-                                        model='.select'>
+                                        model='.rating'>
                                         <option>1</option>
                                         <option>2</option>
                                         <option>3</option>
@@ -50,26 +53,26 @@ class CommentForm extends Component {
                                 <Label md={2} htmlFor='name'>Name</Label>
                                 <Col md={10}>
                                     <Control.text className='form-control' id='name'
-                                        model='.text' placeholder='Name'
+                                        model='.author' placeholder='Name'
                                         validators={{
                                             required, maxLength: maxLength(15), minLength: minLength(2)
                                         }}></Control.text>
-                                    <Errors className='text-danger' model='.text' show='touched'
+                                    <Errors className='text-danger' model='.author' show='touched'
                                         messages={{
                                             required: 'Required',
-                                            maxLength: 'Must be less than 15 character',
-                                            minLength: 'Must be greater than 2 character'
+                                            maxLength: 'khong duoc nhieu hon 15 ki tu',
+                                            minLength: 'khong dc it hon 2 ki tu'
                                         }}></Errors>
                                 </Col>
                             </Row>
                             <Row className='form-group'>
                                 <Label md={2}> Comment</Label>
                                 <Col md={10}>
-                                    <Control.textarea className='form-control' model='.message'
+                                    <Control.textarea className='form-control' model='.comment'
                                         rows='6'></Control.textarea>
                                 </Col>
                             </Row>
-                            <Button type='submit' color='primary' onClick={this.toggleModal}>Submit</Button>
+                            <Button type='submit' color='primary'>Submit</Button>
                         </LocalForm>
                     </ModalBody>
                 </Modal>
